@@ -1,10 +1,12 @@
 import { app } from "./app";
-import { bot } from "./bot";
+import { PORT } from "./config/env";
+import { logger } from "./config/logger";
+import { bot } from "./services/bot";
+
+const port = PORT ?? process.env.PORT;
 
 bot
   .launch()
   .then(() => console.log("BOT STARTED"))
-  .catch((err) => console.log("Error", err));
-
-
-// app.listen(3000)
+  .catch((err) => logger.error(`Telegram Bot Error : ${err}`));
+app.listen(port, () => logger.info(`Server started on port ${port}`));
