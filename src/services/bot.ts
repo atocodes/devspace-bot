@@ -14,10 +14,11 @@ import {
   logger
 } from "../config/logger";
 import {
+  answerQuestion,
   sendMsg
 } from "./gemini_ai";
 import {
-  answerQuestion,
+  // answerQuestion,
   sendMessage
 } from "./ollama_ai";
 import {
@@ -79,7 +80,7 @@ export async function postTask() {
     console.log("Supergroup ID:", supergroupId);
     console.log("Topic ID:", nextTopicName);
 
-    const msg = await sendMessage(nextTopicName);
+    const msg = await sendMsg(nextTopicName);
     if (!msg) return;
 
     await bot.telegram.sendMessage(supergroupId, msg, {
@@ -116,6 +117,7 @@ bot.on("inline_query", async (ctx) => {
   try {
     const query = ctx.inlineQuery.query.trim().toLowerCase();
     const results: InlineQueryResultArticle[] = [];
+    setTimeout(()=>{},2000)
     console.log(query);
     if (query != "" || !query) {
       const res = await answerQuestion(query);

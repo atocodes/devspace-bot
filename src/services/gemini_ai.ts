@@ -4,16 +4,17 @@ import {
 } from "@google/generative-ai";
 import { logger } from "../config/logger";
 import { GEMINI_TOKEN } from "../config/env";
+import { SystemPrompts, TopicNames } from "../constants/topics";
+import { InlineQueryResultArticle } from "telegraf/types";
 
 const ai = new GoogleGenerativeAI(GEMINI_TOKEN!);
-export async function sendMsg(prompt: string): Promise<string | undefined> {
+export async function sendMsg(topic: TopicNames): Promise<string | undefined> {
   try {
     const model = ai.getGenerativeModel({
       model: "gemini-2.5-flash",
-      systemInstruction:
-        "You are a helpful telegram assistant.You must create a random tech posts or tips about coding and software development and also respond using ONLY Telegram-compatible HTML tags: <b>, <i>, <u>, <s>, <code>, <pre>, and <a href=''>. DO NOT use Markdown (no **, no #). If you include code, wrap it in <pre> tags.",
+      systemInstruction: SystemPrompts[topic],
     });
-    const result = await model.generateContent(prompt);
+    const result = await model.generateContent("");
     const response = await result.response;
     return response.text();
   } catch (error) {
@@ -22,5 +23,55 @@ export async function sendMsg(prompt: string): Promise<string | undefined> {
       return;
     }
     logger.error(`Gemini Unknown Error : ${error}`);
+  }
+}
+
+export async function answerQuestion(
+  question: string
+): Promise<InlineQueryResultArticle | undefined> {
+  try {
+    let responseStr = "";
+    const model = ai.getGenerativeModel({
+      model: "gemini-2.5-flash",
+      systemInstruction: `
+        You are a Telegram bot assistant.
+
+Your task is to generate answer ONLY for a Telegram InlineQueryResultArticle
+for the given topic.
+
+Rules:
+- Generate content ONLY for specififed topic.
+- Do NOT explain anything.
+- Do NOT include extra text, comments, or formatting.
+- Do NOT use Markdown.
+- The result must be suitable to be mapped directly into this structure:
+
+{
+  type: "article",
+  id: string,
+  title: string,
+  input_message_content: {
+    message_text: string
+  },
+  description: string
+}
+
+Content rules:
+- title must clearly indicate sending a message to the given topic.
+- input_message_content.message_text must be short, clear, and relevant to the topic.
+- description must briefly describe the topic purpose or destination.
+- Keep message_text concise (1–3 lines max).
+- Use ONLY Telegram-compatible HTML tags if needed.
+
+You will be given a topic name.
+Generate content ONLY related to that topic.
+        `,
+    });
+
+    const result = await model.generateContent(question);
+    const response = await result.response.text();
+    return JSON.parse(response);
+  } catch (error) {
+    logger.error(error);
   }
 }

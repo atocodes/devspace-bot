@@ -3,12 +3,13 @@ import { getNextTopic } from "../utils/topic_rotation";
 import { sendMessage } from "../services/ollama_ai";
 import { logger } from "../config/logger";
 import { pendingPosts } from "../types/bot_types";
+import { sendMsg } from "../services/gemini_ai";
 
 export async function createPostCommand(ctx: Context) {
   try {
     const userId = ctx.from!.id;
     const nextTopic = getNextTopic();
-    const msg = await sendMessage(nextTopic);
+    const msg = await sendMsg(nextTopic);
    
     pendingPosts.set(userId, {
       topic: nextTopic,
