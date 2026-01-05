@@ -1,62 +1,30 @@
+import { Telegraf, TelegramError } from "telegraf";
+import { schedule } from "node-cron";
+import { logger } from "../config/logger";
+import { generateGeminiAnswer, generateGeminiContent } from "./gemini_ai";
 import {
-  Markup,
-  Telegraf,
-  TelegramError
-} from "telegraf";
-import {
-  message
-} from "telegraf/filters";
-import {
-  schedule
-} from "node-cron";
-// import { sendMsg } from "./gemini_ai";
-import {
-  logger
-} from "../config/logger";
-import {
-  answerQuestion,
-  sendMsg
-} from "./gemini_ai";
-import {
-  // answerQuestion,
-  sendMessage
+  // generateGeminiAnswer,
+  generateOllamaContent,
 } from "./ollama_ai";
-import {
-  BOTOKEN
-} from "../config/env";
-import {
-  Chat,
-  InlineQueryResultArticle,
-  InputTextMessageContent,
-} from "telegraf/types";
-import {
-  TopicIds,
-  TopicNames
-} from "../constants/topics";
-import {
-  MIN_INTERVAL
-} from "../constants/post";
-import {
-  getNextTopic
-} from "../utils/topic_rotation";
+import { BOTOKEN } from "../config/env";
+import { InlineQueryResultArticle } from "telegraf/types";
+import { TopicIds, TopicNames } from "../constants/topics";
+import { MIN_INTERVAL } from "../constants/post";
+import { getNextTopic } from "../utils/topic_rotation";
 import {
   isPosting,
   lastPostedAt,
   updateIsPosting,
 } from "../utils/anti_span_guards";
-import {
-  commands
-} from "../commands";
-import {
-  actions
-} from "../actions";
+import { commands } from "../commands";
+import { actions } from "../actions";
 
 if (!BOTOKEN) throw new Error("BOTOKEN not set in .env");
 
 export const bot = new Telegraf(BOTOKEN!);
 const supergroupId = -1003628334767;
 
-export async function postTask() {
+export async function postTask(content?: string, topic?: TopicNames) {
   const now = Date.now();
 
   if (isPosting) {
@@ -72,15 +40,17 @@ export async function postTask() {
   updateIsPosting(true);
 
   try {
-    const nextTopicName = getNextTopic();
+    const nextTopicName = topic ?? getNextTopic();
 
-    console.log(nextTopicName);
     logger.info("Sending message");
-    console.log("TOPIC: ", nextTopicName);
-    console.log("Supergroup ID:", supergroupId);
-    console.log("Topic ID:", nextTopicName);
+    logger.info("TOPIC: " + nextTopicName);
+    logger.info("Supergroup ID: " + supergroupId);
+    logger.info("Topic ID: " + nextTopicName);
 
-    const msg = await sendMsg(nextTopicName);
+    const msg =
+      content ??
+      (await generateGeminiContent(nextTopicName)) ??
+      (await generateOllamaContent(nextTopicName));
     if (!msg) return;
 
     await bot.telegram.sendMessage(supergroupId, msg, {
@@ -97,6 +67,7 @@ export async function postTask() {
   } catch (error) {
     if (error instanceof TelegramError) {
       logger.error(`Telegram Error: ${error.message}`);
+      return;
     } else {
       console.error(error);
     }
@@ -105,7 +76,7 @@ export async function postTask() {
   }
 }
 
-schedule("*/30 */6 * * *", postTask);
+schedule("*/30 */6 * * *", () => postTask());
 
 bot.command("createPost", commands.createPost);
 
@@ -117,15 +88,15 @@ bot.on("inline_query", async (ctx) => {
   try {
     const query = ctx.inlineQuery.query.trim().toLowerCase();
     const results: InlineQueryResultArticle[] = [];
-    setTimeout(()=>{},2000)
-    console.log(query);
+    setTimeout(() => {}, 2000);
     if (query != "" || !query) {
-      const res = await answerQuestion(query);
+      const res = await generateGeminiAnswer(query);
       results.push(res!);
     }
 
     await ctx.answerInlineQuery(results, {
-      cache_time: 3, is_personal: true
+      cache_time: 3,
+      is_personal: true,
     });
   } catch (error) {
     logger.error(error);

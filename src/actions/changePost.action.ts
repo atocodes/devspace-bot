@@ -1,6 +1,6 @@
 import { Context, Markup } from "telegraf";
-import { sendMessage } from "../services/ollama_ai";
-import { pendingPosts } from "../types/bot_types";
+import { generateOllamaContent } from "../services/ollama_ai";
+import { pendingPosts } from "../store/session.store";
 
 export async function CHANGE_POST(ctx: Context) {
   const userId = ctx.from!.id;
@@ -11,7 +11,7 @@ export async function CHANGE_POST(ctx: Context) {
     return;
   }
 
-  const newMsg = await sendMessage(pending.topic);
+  const newMsg = await generateOllamaContent(pending.topic);
   pending.message = newMsg!;
   pendingPosts.set(userId, pending);
 

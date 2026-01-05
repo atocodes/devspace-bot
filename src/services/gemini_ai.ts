@@ -8,7 +8,9 @@ import { SystemPrompts, TopicNames } from "../constants/topics";
 import { InlineQueryResultArticle } from "telegraf/types";
 
 const ai = new GoogleGenerativeAI(GEMINI_TOKEN!);
-export async function sendMsg(topic: TopicNames): Promise<string | undefined> {
+export async function generateGeminiContent(
+  topic: TopicNames
+): Promise<string | undefined | null> {
   try {
     const model = ai.getGenerativeModel({
       model: "gemini-2.5-flash",
@@ -19,14 +21,18 @@ export async function sendMsg(topic: TopicNames): Promise<string | undefined> {
     return response.text();
   } catch (error) {
     if (error instanceof GoogleGenerativeAIFetchError) {
-      logger.error(`Gemini Error : ${error.message}`);
-      return;
+      logger.warn({
+        msg: "❌ Cannot create content from Gemini. Switching to Ollama...",
+        error,
+      });
+      return null;
     }
+
     logger.error(`Gemini Unknown Error : ${error}`);
   }
 }
 
-export async function answerQuestion(
+export async function generateGeminiAnswer(
   question: string
 ): Promise<InlineQueryResultArticle | undefined> {
   try {

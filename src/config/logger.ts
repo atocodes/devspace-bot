@@ -7,7 +7,6 @@ const logDir = path.join(process.cwd(), "logs");
 if (!fs.existsSync(logDir)) {
   fs.mkdirSync(logDir);
 }
-console.log(logDir);
 const fileStream = fs.createWriteStream(path.join(logDir, "app.log"), {
   flags: "a",
 });

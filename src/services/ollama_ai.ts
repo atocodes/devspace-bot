@@ -11,7 +11,7 @@ const ollama = new Ollama({
   },
 });
 
-export async function sendMessage(
+export async function generateOllamaContent(
   topic: TopicNames
 ): Promise<string | undefined> {
   let responseMsg = "";
@@ -36,7 +36,7 @@ export async function sendMessage(
   }
 }
 
-export async function answerQuestion(question: string) : Promise<InlineQueryResultArticle|undefined> {
+export async function generateOllamaAnswer(question: string) : Promise<InlineQueryResultArticle|undefined> {
   try {
     let responseMsg = "";
     const response = await ollama.chat({

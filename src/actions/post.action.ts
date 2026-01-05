@@ -1,21 +1,31 @@
-import { Context, Markup } from "telegraf";
-import { pendingPosts } from "../types/bot_types";
+import { Context, Markup, TelegramError } from "telegraf";
 import { postTask } from "../services/bot";
-import { sendMessage } from "../services/ollama_ai";
+import { generateOllamaContent } from "../services/ollama_ai";
+import { pendingPosts } from "../store/session.store";
+import { logger } from "../config/logger";
 
 export async function POST_CONTENT(ctx: Context) {
-  const userId = ctx.from!.id;
-  const pending = pendingPosts.get(userId);
+  try {
+    const userId = ctx.from!.id;
+    const pending = pendingPosts.get(userId);
 
-  if (!pending) {
-    await ctx.answerCbQuery("No post to send.");
+    if (!pending) {
+      await ctx.answerCbQuery("No post to send.");
+      return;
+    }
+
+    await postTask(pending.message, pending.topic);
+
+    pendingPosts.delete(userId);
+
+    await ctx.editMessageText("Posted successfully!!");
+  } catch (error) {
+    if (error instanceof TelegramError) {
+      await ctx.editMessageText(
+        `Failed to post. Please try again using the /createPost command.`
+      );
+    }
+    logger.error(error);
     return;
   }
-
-  await postTask();
-
-  pendingPosts.delete(userId);
-
-  await ctx.editMessageText("Posted successfully!!");
-  
 }
