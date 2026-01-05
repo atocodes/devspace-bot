@@ -3,7 +3,7 @@
 git fetch origin
 
 LOCAL=$(git rev-parse @)
-REMOTE=$(get rev-parse @{u})
+REMOTE=$(git rev-parse @{u})
 
 if [ "$LOCAL" != "$REMOTE" ]; then
     echo "New commit detected. Pulling..."
