@@ -1,23 +1,23 @@
 import { Telegraf, TelegramError } from "telegraf";
 import { schedule } from "node-cron";
-import { logger } from "../config/logger";
-import { generateGeminiAnswer, generateGeminiContent } from "./gemini_ai";
-import {
-  // generateGeminiAnswer,
-  generateOllamaContent,
-} from "./ollama_ai";
-import { BOTOKEN } from "../config/env";
+import { logger } from "../../config/logger";
+// import {
+//   // generateGeminiAnswer,
+//   generateOllamaContent,
+// } from "../../adapters/chat_bots/ollama_ai";
+import { BOTOKEN } from "../../config/env";
 import { InlineQueryResultArticle } from "telegraf/types";
-import { TopicIds, TopicNames } from "../constants/topics";
-import { MIN_INTERVAL } from "../constants/post";
-import { getNextTopic } from "../utils/topic_rotation";
+import { TopicIds, TopicNames } from "../../constants/topics";
+import { MIN_INTERVAL } from "../../constants/post";
+import { getNextTopic } from "../../utils/topic_rotation";
 import {
   isPosting,
   lastPostedAt,
   updateIsPosting,
-} from "../utils/anti_span_guards";
-import { commands } from "../commands";
-import { actions } from "../actions";
+} from "../../utils/anti_span_guards";
+import { commands } from "./commands";
+import { actions } from "./actions";
+import { adapters } from "../../adapters";
 
 if (!BOTOKEN) throw new Error("BOTOKEN not set in .env");
 
@@ -50,8 +50,8 @@ export async function postTask(content?: string, topic?: TopicNames) {
 
     const msg =
       content ??
-      (await generateGeminiContent(nextTopicName)) ??
-      (await generateOllamaContent(nextTopicName));
+      (await adapters.generateGeminiContent(nextTopicName)) ??
+      (await adapters.generateOllamaContent(nextTopicName));
     if (!msg) return;
 
     await bot.telegram.sendMessage(supergroupId, msg, {
@@ -101,7 +101,9 @@ bot.on("inline_query", async (ctx) => {
     const results: InlineQueryResultArticle[] = [];
     setTimeout(() => {}, 2000);
     if (query != "" || !query) {
-      const res = await generateGeminiAnswer(query);
+      const res =
+        (await adapters.generateGeminiAnswer(query)) ??
+        await adapters.generateOllamaAnswer(query);
       results.push(res!);
     }
 

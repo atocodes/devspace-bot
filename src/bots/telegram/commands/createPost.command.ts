@@ -1,10 +1,10 @@
 import { Context, Markup, TelegramError } from "telegraf";
-import { getNextTopic } from "../utils/topic_rotation";
-import { generateOllamaContent } from "../services/ollama_ai";
-import { logger } from "../config/logger";
-import { generateGeminiContent } from "../services/gemini_ai";
+import { getNextTopic } from "../../../utils/topic_rotation";
+import { generateOllamaContent } from "../../../adapters/chat/ollama_ai";
+import { logger } from "../../../config/logger";
+import { generateGeminiContent } from "../../../adapters/chat/gemini_ai";
 import { GoogleGenerativeAIError } from "@google/generative-ai";
-import { pendingPosts } from "../store/session.store";
+import { pendingPosts } from "../../../store/session.store";
 
 export async function createPostCommand(ctx: Context) {
   try {

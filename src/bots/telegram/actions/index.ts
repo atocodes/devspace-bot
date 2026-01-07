@@ -1,4 +1,4 @@
-import { CANCEL_POST } from "./canclePost.action";
+import { CANCEL_POST } from "./cancelPost.action";
 import { CHANGE_POST } from "./changePost.action";
 import { POST_CONTENT } from "./post.action";
 

@@ -1,7 +1,7 @@
 import { Ollama } from "ollama";
-import { OLLAMA_API_KEY } from "../config/env";
-import { logger } from "../config/logger";
-import { SystemPrompts, TopicNames } from "../constants/topics";
+import { OLLAMA_API_KEY } from "../../config/env";
+import { logger } from "../../config/logger";
+import { SystemPrompts, TopicNames } from "../../constants/topics";
 import { InlineQueryResultArticle } from "telegraf/types";
 
 const ollama = new Ollama({

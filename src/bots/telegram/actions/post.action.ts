@@ -1,8 +1,8 @@
 import { Context, Markup, TelegramError } from "telegraf";
-import { postTask } from "../services/bot";
-import { generateOllamaContent } from "../services/ollama_ai";
-import { pendingPosts } from "../store/session.store";
-import { logger } from "../config/logger";
+import { postTask } from "../bot";
+import { generateOllamaContent } from "../../../adapters/chat/ollama_ai";
+import { pendingPosts } from "../../../store/session.store";
+import { logger } from "../../../config/logger";
 
 export async function POST_CONTENT(ctx: Context) {
   try {

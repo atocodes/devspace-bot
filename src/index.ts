@@ -1,7 +1,7 @@
 import { app } from "./app";
 import { PORT } from "./config/env";
 import { logger } from "./config/logger";
-import { bot } from "./services/bot";
+import { bot } from "./bots/telegram/bot";
 
 const port = PORT ?? process.env.PORT;
 

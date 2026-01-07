@@ -1,6 +1,6 @@
 import { Context, Markup } from "telegraf";
-import { generateOllamaContent } from "../services/ollama_ai";
-import { pendingPosts } from "../store/session.store";
+import { generateOllamaContent } from "../../../adapters/chat/ollama_ai";
+import { pendingPosts } from "../../../store/session.store";
 
 export async function CHANGE_POST(ctx: Context) {
   const userId = ctx.from!.id;

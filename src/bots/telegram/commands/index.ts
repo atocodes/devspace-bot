@@ -1,4 +1,4 @@
-import { createPostCommand } from "./createPost.commad";
+import { createPostCommand } from "./createPost.command";
 
 export const commands = {
   createPost: createPostCommand,
