@@ -2,13 +2,13 @@ import { TopicNames } from "../constants/topics";
 import { Context, Scenes } from "telegraf";
 
 export type PendingPost = {
-    topic: TopicNames;
-    message: string;
+    topic?: TopicNames;
+    message?: string;
 };
 
 export type NewPostParams = {
     topic: TopicNames;
-    prompt: string;
+    prompt?: string;
 };
 
 export interface BotSession extends Scenes.WizardSessionData {}

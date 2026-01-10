@@ -6,12 +6,13 @@ import { logger } from "../../config/logger";
 import { GEMINI_TOKEN } from "../../config/env";
 import { SystemPrompts, TopicNames } from "../../constants/topics";
 import { InlineQueryResultArticle } from "telegraf/types";
+import { NewPostParams } from "../../types/bot_types";
 
 const ai = new GoogleGenerativeAI(GEMINI_TOKEN!);
-export async function generateGeminiContent(
-  topic: TopicNames,
-  prompt?: string
-): Promise<string | undefined | null> {
+export async function generateGeminiContent({
+  topic,
+  prompt,
+}: NewPostParams): Promise<string | undefined | null> {
   try {
     const model = ai.getGenerativeModel({
       model: "gemini-2.5-flash",
@@ -23,8 +24,9 @@ export async function generateGeminiContent(
   } catch (error) {
     if (error instanceof GoogleGenerativeAIFetchError) {
       logger.warn({
-        msg: "❌ Cannot create content from Gemini. Switching to Ollama...",
-        error,
+        msg: `❌ Cannot create content from Gemini.
+        ${[`Status: ${error.status}`, `Msg: ${error.statusText}`]}
+        Switching to Ollama...`,
       });
       return null;
     }

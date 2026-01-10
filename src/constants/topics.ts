@@ -238,7 +238,7 @@ You may use emojis, but limit them to a maximum of 3 per post and avoid crowded 
 If a relevant link exists, include at least one useful URL related to the topic. If not, do NOT include any link.  
 
 Use ONLY Telegram HTML tags:
-<b>, <i>, <u>, <s>, <code>, <pre>, <a href=''>  
+<b>, <i>, <u>, <s>, <code>, <pre>, <a href=''> <ul>  
 No Markdown.
 
 IMPORTANT:
@@ -258,8 +258,9 @@ Emojis are allowed (max 3). Keep the layout clean and readable.
 Include a relevant learning resource link only if it is available and accessible.  
 
 Use ONLY Telegram HTML tags:
-<b>, <i>, <u>, <s>, <code>, <pre>, <a href=''>  
-No Markdown.
+<b>, <i>, <u>, <s>, <code>, <pre>, <a href=''> 
+ 
+No Markdown and no <ul> tags which telegram parser dont support it.
 
 IMPORTANT:
 Every post MUST end exactly with the following footer:
@@ -279,8 +280,9 @@ If no reliable link exists, publish the post WITHOUT any link.
 Emojis are allowed (max 3) and must not clutter the post.  
 
 Use ONLY Telegram HTML tags:
-<b>, <i>, <u>, <s>, <code>, <pre>, <a href=''>  
-No Markdown.
+<b>, <i>, <u>, <s>, <code>, <pre>, <a href=''> 
+ 
+No Markdown and no <ul> tags which telegram parser dont support it.
 
 IMPORTANT:
 Every post MUST end exactly with the following footer:
@@ -299,8 +301,9 @@ Use emojis sparingly (maximum 3).
 Include a Web3-related reference or tutorial link only if it exists and adds value.  
 
 Use ONLY Telegram HTML tags:
-<b>, <i>, <u>, <s>, <code>, <pre>, <a href=''>  
-No Markdown.
+<b>, <i>, <u>, <s>, <code>, <pre>, <a href=''> 
+ 
+No Markdown and no <ul> tags which telegram parser dont support it.
 
 IMPORTANT:
 Every post MUST end exactly with the following footer:
@@ -320,7 +323,8 @@ Add a Flutter tutorial, documentation, or package link only if it exists.
 
 Use ONLY Telegram HTML tags:
 <b>, <i>, <u>, <s>, <code>, <pre>, <a href=''>  
-No Markdown.
+
+No Markdown and no <ul> tags which telegram parser dont support it.
 
 IMPORTANT:
 Every post MUST end exactly with the following footer:
@@ -340,7 +344,8 @@ Include a Git or GitHub reference link only when relevant and available.
 
 Use ONLY Telegram HTML tags:
 <b>, <i>, <u>, <s>, <code>, <pre>, <a href=''>  
-No Markdown.
+
+No Markdown and no <ul> tags which telegram parser dont support it.
 
 IMPORTANT:
 Every post MUST end exactly with the following footer:
@@ -360,7 +365,8 @@ Add a MongoDB-related resource link only if available.
 
 Use ONLY Telegram HTML tags:
 <b>, <i>, <u>, <s>, <code>, <pre>, <a href=''>  
-No Markdown.
+
+No Markdown and no <ul> tags which telegram parser dont support it.
 
 IMPORTANT:
 Every post MUST end exactly with the following footer:
@@ -380,7 +386,8 @@ Include a relevant Godot article or documentation link only if it exists.
 
 Use ONLY Telegram HTML tags:
 <b>, <i>, <u>, <s>, <code>, <pre>, <a href=''>  
-No Markdown.
+
+No Markdown and no <ul> tags which telegram parser dont support it.
 
 IMPORTANT:
 Every post MUST end exactly with the following footer:

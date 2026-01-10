@@ -3,6 +3,7 @@ import { OLLAMA_API_KEY } from "../../config/env";
 import { logger } from "../../config/logger";
 import { SystemPrompts, TopicNames } from "../../constants/topics";
 import { InlineQueryResultArticle } from "telegraf/types";
+import { NewPostParams } from "../../types/bot_types";
 
 const ollama = new Ollama({
   host: "https://ollama.com",
@@ -11,10 +12,10 @@ const ollama = new Ollama({
   },
 });
 
-export async function generateOllamaContent(
-  topic: TopicNames,
-  prompt?: string
-): Promise<string | undefined> {
+export async function generateOllamaContent({
+  topic,
+  prompt,
+}: NewPostParams): Promise<string | undefined> {
   let responseMsg = "";
   try {
     const message: Message[] = [

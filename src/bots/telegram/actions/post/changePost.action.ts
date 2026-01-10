@@ -1,6 +1,7 @@
 import { Context, Markup } from "telegraf";
-import { generateOllamaContent } from "../../../adapters/chat/ollama_ai";
-import { pendingPosts } from "../../../store/session.store";
+import { generateOllamaContent } from "../../../../adapters/chat/ollama_ai";
+import { pendingPosts } from "../../../../store/session.store";
+import { TopicNames } from "../../../../constants/topics";
 
 export async function CHANGE_POST(ctx: Context) {
   const userId = ctx.from!.id;
@@ -11,7 +12,9 @@ export async function CHANGE_POST(ctx: Context) {
     return;
   }
 
-  const newMsg = await generateOllamaContent(pending.topic);
+  const newMsg = await generateOllamaContent({
+    topic: pending.topic as TopicNames,
+  });
   pending.message = newMsg!;
   pendingPosts.set(userId, pending);
 

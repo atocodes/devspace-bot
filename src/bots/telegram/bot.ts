@@ -6,130 +6,172 @@ import { TopicIds, TopicNames, topicNamesList } from "../../constants/topics";
 import { MIN_INTERVAL } from "../../constants/post";
 import { getNextTopic } from "../../utils/topic_rotation";
 import {
-    isPosting,
-    lastPostedAt,
-    updateIsPosting
+  isPosting,
+  lastPostedAt,
+  updateIsPosting,
 } from "../../utils/anti_span_guards";
 import { actions } from "./actions";
 import { adapters } from "../../adapters";
-import { BotContext } from "../../types/bot_types";
+import { BotContext, NewPostParams, PendingPost } from "../../types/bot_types";
 import { createPostCommand } from "./commands/createPost.command";
+import { generateOllamaContent } from "../../adapters/chat/ollama_ai";
+import { pendingPosts, pendingPrompts } from "../../store/session.store";
+import { errorMiddleware } from "./middlewares/bot.middleware";
 
 if (!BOTOKEN) throw new Error("BOTOKEN not set in .env");
 
 export const bot = new Telegraf<BotContext>(BOTOKEN!);
 const supergroupId = -1003628334767;
 let retryCount = 0;
+bot.use(errorMiddleware);
 
-export async function postTask(content?: string, topic?: TopicNames) {
-    const now = Date.now();
+export async function postTask({ message, topic }: PendingPost) {
+  if (isPosting) {
+    logger.warn("Post skipped: already running");
+    return;
+  }
 
-    if (isPosting) {
-        logger.warn("Post skipped: already running");
-        return;
-    }
+  const now = Date.now();
+  if (now - lastPostedAt < MIN_INTERVAL) {
+    logger.warn("Post skipped: too soon");
+    return;
+  }
 
-    if (now - lastPostedAt < MIN_INTERVAL) {
-        logger.warn("Post skipped: too soon");
-        return;
-    }
+  updateIsPosting(true);
 
-    updateIsPosting(true);
+  try {
+    const nextTopicName = topic ?? getNextTopic();
+    console.log(nextTopicName);
+    logger.info("Sending message");
+    logger.info("TOPIC: " + nextTopicName);
+    logger.info("Supergroup ID: " + supergroupId);
+    logger.info("Topic ID: " + nextTopicName);
+    logger.info("Topic Link: " + TopicIds[nextTopicName]);
+    const msg =
+      message ??
+      (await adapters.generateGeminiContent({ topic: nextTopicName })) ??
+      (await adapters.generateOllamaContent({ topic: nextTopicName }));
+    if (!msg) return;
+    await bot.telegram.sendMessage(supergroupId, msg, {
+      parse_mode: "HTML",
+      message_thread_id: TopicIds[nextTopicName],
+      link_preview_options: {
+        show_above_text: true,
+        prefer_small_media: true,
+        prefer_large_media: false,
+      },
+    });
 
-    try {
-        const nextTopicName = topic ?? getNextTopic();
-
-        logger.info("Sending message");
-        logger.info("TOPIC: " + nextTopicName);
-        logger.info("Supergroup ID: " + supergroupId);
-        logger.info("Topic ID: " + nextTopicName);
-
-        const msg =
-            content ??
-            (await adapters.generateGeminiContent(nextTopicName)) ??
-            (await adapters.generateOllamaContent(nextTopicName));
-        if (!msg) return;
-
-        await bot.telegram.sendMessage(supergroupId, msg, {
-            parse_mode: "HTML",
-            message_thread_id: TopicIds[nextTopicName],
-            link_preview_options: {
-                show_above_text: true,
-                prefer_small_media: true,
-                prefer_large_media: false
-            }
-        });
-
-        logger.info("Scheduled message sent.");
-    } catch (error) {
-        if (error instanceof TelegramError) {
-            logger.error(`Telegram Error: ${error.message}`);
-            // return;
-            retryCount += 1;
-            if (retryCount != 3) {
-                updateIsPosting(false);
-                console.log("Trying again", retryCount);
-                return await postTask();
-            }
-            return;
-        } else {
-            logger.error(error);
-        }
-    } finally {
+    logger.info("Scheduled message sent.");
+  } catch (error) {
+    if (error instanceof TelegramError) {
+      logger.error(`Telegram Error: ${error.message}`);
+      // return;
+      retryCount += 1;
+      if (retryCount != 3) {
         updateIsPosting(false);
-        if (retryCount > 0) retryCount = 0;
+        // console.log("Trying again", retryCount);
+        return await postTask({ topic, message });
+      }
+      return;
+    } else {
+      logger.error("PostTask Error: " + error);
     }
+  } finally {
+    updateIsPosting(false);
+    if (retryCount > 0) retryCount = 0;
+  }
 
-    console.log(retryCount, isPosting);
+  // console.log(retryCount, isPosting);
 }
 
-schedule("*/15 * * * *", () => postTask());
-
-Object.entries(actions).forEach(([key, handler]) => {
-    bot.action(key, handler);
+schedule("*/15 * * * *", async () => {
+  try {
+    await postTask({});
+  } catch (error) {
+    logger.fatal("Cron crashed: " + (error as Error).message);
+  }
 });
 
-bot.command("createpost", ctx => {
-    ctx.reply("Select topic:", Markup.keyboard([...topicNamesList]).oneTime());
+bot.command("createpost", (ctx) => {
+  ctx.reply("Select topic:", Markup.keyboard([...topicNamesList]).oneTime());
 });
 
 const isUserAdmin = async (ctx: BotContext) => {
-    const userid = await ctx.message!.from.id;
-    const admins = await ctx.telegram.getChatAdministrators(supergroupId);
+  const userid = await ctx.message!.from.id;
+  const admins = await ctx.telegram.getChatAdministrators(supergroupId);
 
-    return admins.filter(user => user.user.id == userid).length > 0;
+  return admins.filter((user) => user.user.id == userid).length > 0;
 };
 
-bot.hears(/^topic:/i, async ctx => {
+bot.hears(/^topic:/i, async (ctx) => {
+  try {
     const text = ctx.message.text;
     if ((await isUserAdmin(ctx)) == false) {
-        return ctx.reply("sorry youre not an admin");
+      return ctx.reply("sorry youre not an admin");
     }
     const parts = Object.fromEntries(
-        text.split("|").map(p => {
-            const [key, ...rest] = p.split(":");
-            return [key.trim().toLowerCase(), rest.join(":").trim()];
-        })
+      text.split("|").map((p) => {
+        const [key, ...rest] = p.split(":");
+        return [key.trim().toLowerCase(), rest.join(":").trim()];
+      })
     );
 
-    const topic = parts.topic;
+    const topic = parts.topic as TopicNames;
     const prompt = parts.prompt;
 
     if (!topic || !prompt) {
-        return ctx.reply("❌ Format:\n topic:<name> | prompt:<instruction>");
+      return ctx.reply("❌ Format:\n topic:<name> | prompt:<instruction>");
     }
-    
+    console.log(parts);
+    pendingPrompts.set(ctx.from.id, parts as NewPostParams);
+
     ctx.reply(`🧠 Generating content for *${topic}*...`, {
-        parse_mode: "Markdown"
+      parse_mode: "Markdown",
     });
 
-    await createPostCommand(ctx, {
-        topic: topic as TopicNames,
-        prompt: prompt
+    const res = await generateOllamaContent({
+      topic: topic as TopicNames,
+      prompt,
     });
+    pendingPrompts.delete(ctx.from.id);
+    pendingPosts.set(ctx.from.id, {
+      message: res!,
+      topic: topic as TopicNames,
+    });
+
+    await ctx.reply(res as string, {
+      parse_mode: "HTML",
+      ...Markup.inlineKeyboard([
+        [
+          Markup.button.callback("Post", "POST_CONTENT"),
+          Markup.button.callback("change", "CHANGE_POST"),
+        ],
+        [Markup.button.callback("Cancel", "CANCEL_POST")],
+      ]),
+    });
+  } catch (error) {
+    if (error instanceof Error) {
+      const msg: string = `Failed to generate or send post\nMsg: ${error.message} Err: ${error.name}\nuser: ${ctx.from?.id},
+        `;
+      logger.error(msg);
+      await ctx.reply(msg, {
+        ...Markup.inlineKeyboard([
+          [
+            Markup.button.callback("Retry", "RETRY_PROMPT"),
+            Markup.button.callback("Cancel", "CACNCLE_PROMPT"),
+          ],
+        ]),
+      });
+
+      return;
+    }
+
+    logger.error("unkown error");
+    await ctx.reply("Unknown error");
+  }
 });
 
-// bot.message("text",ctx=>{
-//   const msg = ctx.message.text
-//   console.log(`hey ${msg}...`)
-// })
+Object.entries(actions).forEach(([key, handler]) => {
+  bot.action(key, handler);
+});
