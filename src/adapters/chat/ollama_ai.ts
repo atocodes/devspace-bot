@@ -1,9 +1,8 @@
-import { ChatRequest, Message, Ollama } from "ollama";
-import { OLLAMA_API_KEY } from "../../config/env";
-import { logger } from "../../config/logger";
-import { SystemPrompts, TopicNames } from "../../constants/topics";
+import { Message, Ollama } from "ollama";
 import { InlineQueryResultArticle } from "telegraf/types";
-import { NewPostParams } from "../../types/bot_types";
+import { NewPostParams } from "../../bots/telegram/types/bot_types";
+import { SystemPrompts } from "./prompts/system.prompts";
+import { logger, OLLAMA_API_KEY } from "../../config";
 
 const ollama = new Ollama({
   host: "https://ollama.com",
@@ -43,6 +42,7 @@ export async function generateOllamaContent({
     return responseMsg;
   } catch (error) {
     logger.error(error);
+    throw error;
   }
 }
 

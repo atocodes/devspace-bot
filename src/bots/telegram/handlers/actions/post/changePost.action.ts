@@ -1,7 +1,7 @@
 import { Context, Markup } from "telegraf";
-import { generateOllamaContent } from "../../../../adapters/chat/ollama_ai";
-import { pendingPosts } from "../../../../store/session.store";
-import { TopicNames } from "../../../../constants/topics";
+import { generateOllamaContent } from "../../../../../adapters/chat/ollama_ai";
+import { pendingPosts } from "../../../state/pendingPosts.store";
+import { TopicNames } from "../../../types";
 
 export async function CHANGE_POST(ctx: Context) {
   const userId = ctx.from!.id;
@@ -12,9 +12,12 @@ export async function CHANGE_POST(ctx: Context) {
     return;
   }
 
+  await ctx.editMessageText("✏️ Updating the post...");
+
   const newMsg = await generateOllamaContent({
     topic: pending.topic as TopicNames,
   });
+  
   pending.message = newMsg!;
   pendingPosts.set(userId, pending);
 

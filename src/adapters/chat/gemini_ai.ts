@@ -2,11 +2,10 @@ import {
   GoogleGenerativeAI,
   GoogleGenerativeAIFetchError,
 } from "@google/generative-ai";
-import { logger } from "../../config/logger";
-import { GEMINI_TOKEN } from "../../config/env";
-import { SystemPrompts, TopicNames } from "../../constants/topics";
 import { InlineQueryResultArticle } from "telegraf/types";
-import { NewPostParams } from "../../types/bot_types";
+import { NewPostParams } from "../../bots/telegram/types/bot_types";
+import { SystemPrompts } from "./prompts/system.prompts";
+import { GEMINI_TOKEN, logger } from "../../config";
 
 const ai = new GoogleGenerativeAI(GEMINI_TOKEN!);
 export async function generateGeminiContent({

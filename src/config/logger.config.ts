@@ -14,10 +14,15 @@ const fileStream = fs.createWriteStream(path.join(logDir, "app.log"), {
 export const logger = pino(
   {
     level: "info",
-    transport:{
-        target: 'pino-pretty'
-    },
     timestamp: pino.stdTimeFunctions.isoTime,
   },
-  pino.multistream([{ stream: process.stdout }, { stream: fileStream }])
+  pino.multistream([
+    {
+      stream: pino.transport({
+        target: "pino-pretty",
+        options: { colorize: true },
+      }),
+    },
+    { stream: fileStream },
+  ])
 );

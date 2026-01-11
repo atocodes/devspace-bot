@@ -1,5 +1,5 @@
 import { Context } from "telegraf";
-import { pendingPosts } from "../../../../store/session.store";
+import { pendingPosts } from "../../../state/pendingPosts.store";
 
 export async function CANCEL_POST(ctx: Context) {
   const userId = ctx.from!.id;
