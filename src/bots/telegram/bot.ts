@@ -1,14 +1,13 @@
 import { Telegraf, TelegramError, Markup, Context } from "telegraf";
 import { schedule } from "node-cron";
 
-import { retry } from "./utils/retry";
+import { retry } from "./utils/retry.util";
 import { actions } from "./handlers/actions";
 import { postTask } from "./tasks/post.task";
-import { topicHearsHandler } from "./handlers/hears/topic.hears";
-import { topicNamesList } from "./types";
 import { auth, errorMiddleware } from "./middlewares";
 import { BOTOKEN, logger, NODE_ENV } from "../../config";
 import { startCommand } from "./handlers/command";
+import { sudo, topicHearsHandler } from "./handlers/hears";
 
 if (!BOTOKEN) throw new Error("BOTOKEN not set in .env");
 
@@ -36,7 +35,8 @@ else {
 }
 
 bot.hears(/^topic:/i, topicHearsHandler);
-
+bot.hears(/^[Ss]udo$/i,sudo)
 Object.entries(actions).forEach(([key, handler]) => {
+  console.log(key)
   bot.action(key, handler);
 });

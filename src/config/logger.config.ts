@@ -1,13 +1,12 @@
 import pino from "pino";
 import fs from "fs";
-import path from "path";
+import { logDir, logFilePath } from "../constants";
 
-const logDir = path.join(process.cwd(), "logs");
 
 if (!fs.existsSync(logDir)) {
   fs.mkdirSync(logDir);
 }
-const fileStream = fs.createWriteStream(path.join(logDir, "app.log"), {
+const fileStream = fs.createWriteStream(logFilePath, {
   flags: "a",
 });
 
