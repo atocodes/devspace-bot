@@ -1,5 +1,5 @@
 import * as dotenv from "dotenv";
-import { ENVTYPE } from "../types/env_type";
+import { ENVTYPE } from "../../types/env_type";
 dotenv.config({
   path:
     process.env.NODE_ENV == "production"

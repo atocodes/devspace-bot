@@ -1,6 +1,6 @@
 import { Context, Telegram } from "telegraf";
 import { DevSpaceGroupId } from "../../../constants";
-import { ALLOWED_CHAT_IDS } from "../../../config";
+import { ALLOWED_CHAT_IDS } from "../../../infrastructure/config";
 
 export const auth = async (
   ctx: Context,

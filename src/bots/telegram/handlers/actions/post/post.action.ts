@@ -2,7 +2,7 @@ import { Context, TelegramError } from "telegraf";
 import { pendingPosts } from "../../../state/pendingPosts.store";
 import { PendingPost } from "../../../types/bot_types";
 import { postTask } from "../../../tasks/post.task";
-import { logger } from "../../../../../config";
+import { logger } from "../../../../../infrastructure/config";
 
 export async function POST_CONTENT(ctx: Context) {
   try {

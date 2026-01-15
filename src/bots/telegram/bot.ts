@@ -5,9 +5,10 @@ import { retry } from "./utils/retry.util";
 import { actions } from "./handlers/actions";
 import { postTask } from "./tasks/post.task";
 import { auth, errorMiddleware } from "./middlewares";
-import { BOTOKEN, logger, NODE_ENV } from "../../config";
+import { BOTOKEN, logger, NODE_ENV } from "../../infrastructure/config";
 import { startCommand } from "./handlers/command";
 import { sudo, topicHearsHandler } from "./handlers/hears";
+import { TopicRepositoryImpl } from "../../infrastructure/database/sqlite/repositories/topic.repo.impl";
 
 if (!BOTOKEN) throw new Error("BOTOKEN not set in .env");
 

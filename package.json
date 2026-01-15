@@ -14,6 +14,7 @@
   "license": "ISC",
   "type": "commonjs",
   "devDependencies": {
+    "@types/better-sqlite3": "^7.6.13",
     "@types/node": "^25.0.3",
     "@types/pino": "^7.0.5",
     "cross-env": "^10.1.0",
@@ -26,6 +27,7 @@
     "@google/generative-ai": "^0.24.1",
     "@telegraf/entity": "^0.7.0",
     "@types/express": "^5.0.6",
+    "better-sqlite3": "^12.6.0",
     "dotenv": "^17.2.3",
     "express": "^5.2.1",
     "node-cron": "^4.2.1",

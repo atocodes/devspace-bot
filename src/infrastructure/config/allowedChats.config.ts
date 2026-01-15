@@ -1,4 +1,4 @@
-import { DevSpaceGroupId } from "../constants";
+import { DevSpaceGroupId } from "../../constants";
 import { NODE_ENV } from "./env.config";
 
 export const ALLOWED_CHAT_IDS = [

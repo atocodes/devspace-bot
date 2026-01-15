@@ -1,5 +1,5 @@
 import { Context, MiddlewareFn} from "telegraf";
-import { logger } from "../../../config";
+import { logger } from "../../../infrastructure/config";
 
 export const errorMiddleware: MiddlewareFn<Context> = async (ctx, next) => {
   try {

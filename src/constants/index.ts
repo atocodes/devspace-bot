@@ -1,7 +1,14 @@
 import path from "path";
 import { DevSpaceGroupId } from "./group.constants";
 import { MIN_INTERVAL } from "./post.constants";
+import fs from "fs";
 const logDir = path.join(process.cwd(), "logs");
-const logFilePath = path.join(logDir, "app.log")
+const databaseDir = path.join(process.cwd(), "db");
+const logFilePath = path.join(logDir, "app.log");
+const sqlFilePath = path.join(databaseDir, "mydb.sqlite");
 
-export {MIN_INTERVAL,DevSpaceGroupId,logDir,logFilePath}
+if(!fs.existsSync(databaseDir)){
+    fs.mkdirSync(databaseDir)
+}
+
+export { MIN_INTERVAL, DevSpaceGroupId, logDir, logFilePath, sqlFilePath };
