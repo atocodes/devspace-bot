@@ -2,7 +2,7 @@ import { Message, Ollama } from "ollama";
 import { InlineQueryResultArticle } from "telegraf/types";
 import { NewPostParams } from "../../bots/telegram/types/bot_types";
 import { SystemPrompts } from "./prompts/system.prompts";
-import { logger, OLLAMA_API_KEY } from "../../config";
+import { logger, OLLAMA_API_KEY } from "../../infrastructure/config";
 
 const ollama = new Ollama({
   host: "https://ollama.com",

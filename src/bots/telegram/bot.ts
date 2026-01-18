@@ -5,21 +5,35 @@ import { retry } from "./utils/retry.util";
 import { actions } from "./handlers/actions";
 import { postTask } from "./tasks/post.task";
 import { auth, errorMiddleware } from "./middlewares";
-import { BOTOKEN, logger, NODE_ENV } from "../../config";
+import { BOTOKEN, logger, NODE_ENV } from "../../infrastructure/config";
 import { startCommand } from "./handlers/command";
 import { sudo, topicHearsHandler } from "./handlers/hears";
+import { SUPER_GROUP_ID } from "../../infrastructure/config/env.config";
+import {
+  getRequestedContents,
+  submitContentRequest,
+} from "../../infrastructure/container";
 
 if (!BOTOKEN) throw new Error("BOTOKEN not set in .env");
 
 export const bot = new Telegraf(BOTOKEN!);
+
 bot.use(errorMiddleware);
 
-bot.start(startCommand)
+bot.start(startCommand);
 
 bot.use((ctx, next) => auth(ctx, next, bot.telegram));
 
 if (NODE_ENV == "production")
-  schedule("*/15 * * * *", async () => {
+  schedule("*/30 */6 * * */2", async () => {
+    /*
+    The task runs:
+    Every 30 minutes
+    During 00, 06, 12, and 18 hours
+    On Sun, Tue, Thu, Sat
+    All year round 
+    */
+
     try {
       retry(() => postTask({}), {
         retries: 3,
@@ -35,8 +49,7 @@ else {
 }
 
 bot.hears(/^topic:/i, topicHearsHandler);
-bot.hears(/^[Ss]udo$/i,sudo)
+bot.hears(/^[Ss]udo$/i, sudo);
 Object.entries(actions).forEach(([key, handler]) => {
-  console.log(key)
   bot.action(key, handler);
 });

@@ -2,6 +2,7 @@ import fs from "fs";
 import { Context } from "telegraf";
 import { logFilePath } from "../../../../../constants";
 import { escapeMarkdownV2 } from "../../../utils";
+import { logger } from "../../../../../infrastructure/config";
 
 export async function GET_LOG(ctx: Context) {
   try {
@@ -40,7 +41,7 @@ export async function GET_LOG(ctx: Context) {
       },
       {
         caption: captionText,
-      }
+      },
     );
 
     const prevMessage = await ctx.reply(previewText);
@@ -55,11 +56,12 @@ export async function GET_LOG(ctx: Context) {
           await ctx.deleteMessage(originalMessageId);
         }
       } catch (err) {
-        console.error("Failed to delete message:", err);
+        logger.error({ error: err }, "Failed to delete message:");
+        throw err;
       }
     }, 5000);
   } catch (err) {
-    console.error("Failed to send log file:", err);
+    logger.error({ error: err }, "Failed to send log file:");
     await ctx.reply("Failed to send logs.");
   }
 }

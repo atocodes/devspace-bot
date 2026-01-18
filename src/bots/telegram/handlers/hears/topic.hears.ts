@@ -4,7 +4,7 @@ import { parseTopicMessage } from "../../parsers/topicMessage.parser";
 import { pendingPosts, pendingPrompts } from "../../state";
 import { NewPostParams } from "../../types/bot_types";
 import { retry } from "../../utils/retry.util";
-import { logger } from "../../../../config";
+import { logger } from "../../../../infrastructure/config";
 
 export const topicHearsHandler = async (ctx: any) => {
   try {
