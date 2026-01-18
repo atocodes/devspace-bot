@@ -1,9 +1,8 @@
 import { app } from "./app";
 import { bot } from "./bots";
-import { logger, PORT } from "./config";
+import { logger, PORT } from "./infrastructure/config";
 
 const port = PORT ?? process.env.PORT;
-
 bot
   .launch()
   .then(() => logger.info("BOT STARTED"))

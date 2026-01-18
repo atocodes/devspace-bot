@@ -1,5 +1,5 @@
 import { Context, Markup } from "telegraf";
-import { SudoUsersId } from "../../../../config/sudoUsers.config";
+import { SudoUsersId } from "../../../../infrastructure/config/sudoUsers.config";
 
 export async function sudo(ctx: Context) {
   const userId = ctx.from?.id;
@@ -9,7 +9,11 @@ export async function sudo(ctx: Context) {
       {
         parse_mode: "Markdown",
         ...Markup.inlineKeyboard([
-          [Markup.button.callback("Get Logs", "GET_LOG")],
+          [
+            Markup.button.callback("Get Logs", "GET_LOG"),
+
+            Markup.button.callback("Get Topics", "GET_TOPICS"),
+          ],
         ]),
       }
     );

@@ -5,7 +5,7 @@ import {
 import { InlineQueryResultArticle } from "telegraf/types";
 import { NewPostParams } from "../../bots/telegram/types/bot_types";
 import { SystemPrompts } from "./prompts/system.prompts";
-import { GEMINI_TOKEN, logger } from "../../config";
+import { GEMINI_TOKEN, logger } from "../../infrastructure/config";
 
 const ai = new GoogleGenerativeAI(GEMINI_TOKEN!);
 export async function generateGeminiContent({

@@ -12,7 +12,7 @@ import {
   generateOllamaContent,
 } from "../../../adapters";
 import { TopicIds } from "../types";
-import { logger } from "../../../config";
+import { logger } from "../../../infrastructure/config";
 import { MIN_INTERVAL } from "../../../constants";
 
 const supergroupId = -1003628334767;

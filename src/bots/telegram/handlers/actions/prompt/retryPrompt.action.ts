@@ -5,7 +5,7 @@ import {
 import { retry } from "../../../utils/retry.util";
 import { NewPostParams } from "../../../types/bot_types";
 import { pendingPosts, pendingPrompts } from "../../../state";
-import { logger } from "../../../../../config";
+import { logger } from "../../../../../infrastructure/config";
 
 export async function RETRY_PROMPT(ctx: Context) {
   try {
