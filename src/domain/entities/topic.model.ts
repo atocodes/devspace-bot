@@ -1,5 +1,5 @@
-export type Topic = {
+export interface Topic {
   title: string;
-  id?: number;
-  topicId?: number;
-};
+  id?: number | undefined;
+  topicId?: number | undefined;
+}

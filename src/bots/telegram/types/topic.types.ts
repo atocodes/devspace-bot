@@ -7,6 +7,8 @@ export const topicNamesList = [
   "gitngithub",
   "mongodb",
   "godot",
+  "nodejs",
+  "linux",
 ] as const; // "as const" makes each item a literal type
 
 // Step 2: Derive the type from the array
@@ -21,4 +23,6 @@ export const TopicIds: Record<TopicNames, number> = {
   gitngithub: 8,
   mongodb: 12,
   godot: 15,
+  nodejs: 727,
+  linux: 729,
 };

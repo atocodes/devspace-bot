@@ -266,4 +266,16 @@ ${BasePrompt}
 
 Focus on Godot tips, tricks, workflow, and project setup. Include beginner-friendly guidance plus advanced practices that help build better games from the start.
 `.trim(),
+
+  linux: `
+${BasePrompt}
+
+Focus on Linux commands, environment setup, file system basics, permissions, and workflow tips. Include beginner-friendly explanations while highlighting best practices developers should adopt early when working with Linux.
+`.trim(),
+
+  nodejs: `
+${BasePrompt}
+
+Focus on Node.js fundamentals, project structure, package management, performance tips, and backend best practices. Include beginner-friendly guidance while introducing advanced habits developers should adopt early.
+`.trim(),
 };

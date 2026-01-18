@@ -1,4 +1,4 @@
-import { ALLOWED_CHAT_IDS } from "./allowedChats.config";
+import { ALLOWED_SUPER_GROUP_IDS } from "./allowedSuperGroupsId";
 import {
   BOTOKEN,
   GEMINI_TOKEN,
@@ -15,5 +15,5 @@ export {
   PORT,
   OLLAMA_API_KEY,
   NODE_ENV,
-  ALLOWED_CHAT_IDS,
+  ALLOWED_SUPER_GROUP_IDS,
 };

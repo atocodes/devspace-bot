@@ -1,7 +1,7 @@
-import { DevSpaceGroupId } from "../../../constants";
+import { SUPER_GROUP_ID } from "../../../infrastructure/config/env.config";
 import { bot } from "../bot";
 
 export const getAdminsId = async () =>
-  (await bot.telegram.getChatAdministrators(DevSpaceGroupId)).map(
+  (await bot.telegram.getChatAdministrators(SUPER_GROUP_ID)).map(
     (admin) => admin.user.id
   );
