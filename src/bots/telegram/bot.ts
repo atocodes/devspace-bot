@@ -17,6 +17,7 @@ bot.use((ctx, next) => errorMiddleware(ctx, next));
 bot.use((ctx, next) => threadPostGuard(ctx, next));
 bot.start(startCommand);
 
+
 bot.use((ctx, next) => auth(ctx, next, bot.telegram));
 if (NODE_ENV == "production")
   schedule("*/30 */6 * * */2", async () => {
