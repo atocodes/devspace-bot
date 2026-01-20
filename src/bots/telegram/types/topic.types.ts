@@ -9,6 +9,8 @@ export const topicNamesList = [
   "godot",
   "nodejs",
   "linux",
+  "fastapi",
+  "reactnative",
 ] as const; // "as const" makes each item a literal type
 
 // Step 2: Derive the type from the array
@@ -25,4 +27,6 @@ export const TopicIds: Record<TopicNames, number> = {
   godot: 15,
   nodejs: 727,
   linux: 729,
+  fastapi: 810,
+  reactnative: 803,
 };

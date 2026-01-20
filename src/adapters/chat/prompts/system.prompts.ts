@@ -314,4 +314,16 @@ ${BasePrompt}
 
 Focus on Node.js fundamentals, project structure, package management, performance tips, and backend best practices. Include beginner-friendly guidance while introducing advanced habits developers should adopt early.
 `.trim(),
+
+  fastapi: `
+${BasePrompt}
+
+Focus on FastAPI fundamentals, project structure, request/response models, validation, authentication basics, and performance best practices. Include beginner-friendly guidance while highlighting clean architecture and scalable patterns developers should adopt early.
+`.trim(),
+
+  reactnative: `
+${BasePrompt}
+
+Focus on React Native fundamentals, project setup, component structure, state management basics, performance tips, and mobile best practices. Include beginner-friendly guidance while introducing scalable patterns developers should adopt early.
+`.trim(),
 };

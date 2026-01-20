@@ -5,6 +5,7 @@ import { POST_CONTENT } from "./post/post.action";
 import { RETRY_PROMPT } from "./prompt/retryPrompt.action";
 import { GET_TOPICS } from "./sudo/getTopics.action";
 import { GET_LOG } from "./sudo/sendLogFile.actions";
+import { TOPICHANDLER } from "./topics/topic_handler.action";
 
 export const actions = {
   POST_CONTENT,
@@ -14,3 +15,5 @@ export const actions = {
   GET_LOG,
   GET_TOPICS,
 };
+
+export {TOPICHANDLER}
