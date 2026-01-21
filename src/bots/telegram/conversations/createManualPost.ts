@@ -1,7 +1,6 @@
-import { Scenes, session, Markup, Context } from "telegraf";
-import { AssistantBotContext } from "../contexts/supergroup.context";
+import { Scenes, Markup } from "telegraf";
 import { convertTo2DArray, SendMessage } from "../utils";
-import { TopicNames, topicNamesList } from "../types";
+import { AssistantBotContext, TopicNames, topicNamesList } from "../types";
 import { pendingPrompts } from "../state";
 
 // Use generic Scenes.SceneContext for simple flows
@@ -36,11 +35,8 @@ promptScene.enter((ctx) => {
 });
 
 promptScene.on("text", async (ctx) => {
-  console.log(ctx.update)
-  console.log("hello")
   const topic = ctx.session.__scenes?.topic as TopicNames;
   const prompt = ctx.message.text;
-  console.log(prompt)
   pendingPrompts.set(ctx.from.id, { topic, prompt });
   
   await SendMessage(ctx, { topic, prompt });
