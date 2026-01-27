@@ -24,7 +24,7 @@ pnpm install
 pnpm run dev
 ```
 
-Configure environment variables (bot token, paths) via `.env` or `src/config/env.config.ts`.
+Configure environment variables (bot token, paths) via `.env` or `src/infrastructure/config/env.config.ts`.
 
 ## Database
 

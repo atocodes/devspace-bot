@@ -1,6 +1,7 @@
 import { logger } from "../config";
-import { contentRequestsDB, topicsDB } from "./nedb/nedb.connection";
+import { topicsDB } from "./nedb";
 
+export * from "./nedb";
 topicsDB.ensureIndex(
   {
     fieldName: ["title", "threadId"],
@@ -12,3 +13,4 @@ topicsDB.ensureIndex(
     }
   },
 );
+

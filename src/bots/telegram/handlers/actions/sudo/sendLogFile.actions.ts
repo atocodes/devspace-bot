@@ -1,7 +1,6 @@
 import fs from "fs";
 import { Context } from "telegraf";
 import { logFilePath } from "../../../../../constants";
-import { escapeMarkdownV2 } from "../../../utils";
 import { logger } from "../../../../../infrastructure/config";
 
 export async function GET_LOG(ctx: Context) {

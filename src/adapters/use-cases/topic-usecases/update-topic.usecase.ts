@@ -1,4 +1,5 @@
-import { TopicRepository } from "../../../domain/repositories/topic.repo";
+import { TopicRepository } from "../../../domain/repositories"
+;;
 
 export class UpdateTopicTitleUsecase {
   constructor(private readonly topicRepo: TopicRepository) {}

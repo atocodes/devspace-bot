@@ -1,12 +1,9 @@
 import { Context } from "telegraf";
-import { isUserAdmin } from "../../utils";
-import {
-  createTopicUseCase,
-  findTopicUseCase,
-} from "../../../../infrastructure/container";
-import { logger } from "../../../../infrastructure/config";
 import { Message, Update } from "telegraf/types";
+import { createTopicUseCase, findTopicUseCase, logger } from "../../../../infrastructure";
 import { bot } from "../../bot";
+import { TopicLimitExceededError } from "../../../../domain";
+
 
 export async function registerTopic(
   ctx: Context<{
@@ -38,7 +35,7 @@ export async function registerTopic(
         return;
       }
 
-      createTopicUseCase.execute({
+      await createTopicUseCase.execute({
         title: msg.reply_to_message.forum_topic_created.name,
         threadId: msg.message_thread_id,
         creator: msg.from,
@@ -58,13 +55,29 @@ export async function registerTopic(
         { parse_mode: "HTML" },
       );
     }
+    await ctx.deleteMessage(ctx.message.message_id);
   } catch (error) {
+    if (error instanceof TopicLimitExceededError) {
+      logger.error({ ...error }, error.message);
+      await bot.telegram.sendMessage(
+        ctx.from.id,
+        `${error.message}\nDeleting Topic....`,
+      );
+      await bot.telegram.deleteForumTopic(
+        ctx.chat.id,
+        ctx.message.message_thread_id!,
+      );
+
+      await bot.telegram.sendMessage(
+        ctx.from.id,
+        `Topic Removed from the super group`,
+      );
+      return;
+    }
     logger.error({ ...(error as Error) }, "Error happended creating topic");
     await bot.telegram.sendMessage(
       ctx.from.id,
       `Something went wrong Error: ${error} `,
     );
-  } finally {
-    ctx.deleteMessage(ctx.message.message_id);
   }
 }

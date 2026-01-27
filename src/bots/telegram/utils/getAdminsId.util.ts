@@ -7,6 +7,10 @@ export const getAdminsId = async () =>
   );
 
 export const isUserAdmin = async (userId: number) => {
-  const adminsId = await getAdminsId();
-  return adminsId.includes(userId);
+  try {
+    const adminsId = await getAdminsId();
+    return adminsId.includes(userId);
+  } catch (error) {
+    return false;
+  }
 };

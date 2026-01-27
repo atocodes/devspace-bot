@@ -1,23 +1,21 @@
-import { Telegraf, session } from "telegraf";
-import { schedule } from "node-cron";
-
-import { retry } from "./utils/retry.util";
-import { actions } from "./handlers/actions";
-import { postTask } from "./tasks/post.task";
+import { session, Telegraf } from "telegraf";
+import { BOTOKEN, logger, NODE_ENV } from "../../infrastructure";
+import { AssistantBotContext } from "./types";
 import {
   auth,
   errorMiddleware,
   threadPostGuard,
   updateTopic,
 } from "./middlewares";
-import { BOTOKEN, logger, NODE_ENV } from "../../infrastructure/config";
-import { startCommand } from "./handlers/command";
-import { registerTopic, sudo } from "./handlers/hears";
+import { actions, registerTopic, startCommand, sudo } from "./handlers";
 import {
   stage,
+  STARTMANAGETOPICCONVERSATION,
   STARTMANUALPOSTCONVERSATION,
-} from "./conversations/createManualPost";
-import { AssistantBotContext } from "./types";
+} from "./conversations";
+import { retry } from "./utils";
+import { postTask } from "./tasks";
+import { schedule } from "node-cron";
 
 if (!BOTOKEN) throw new Error("BOTOKEN not set in .env");
 
@@ -55,15 +53,15 @@ bot.use(stage.middleware());
 
 // Start conversatinal bot
 bot.command("createcontent", STARTMANUALPOSTCONVERSATION);
+bot.command("managetopics", STARTMANAGETOPICCONVERSATION);
 bot.on("message", updateTopic);
 
 if (NODE_ENV == "production")
   schedule("*/30 */2 * * *", async () => {
     /*
     The task runs:
-    Every 30 minutes
-    During 00, 06, 12, and 18 hours
-    On Sun, Tue, Thu, Sat
+    Every 30 minutes in 2 Hrs
+    Everyday
     All year round 
     */
 
@@ -84,4 +82,3 @@ else {
 Object.entries(actions).forEach(([key, handler]) => {
   bot.action(key, handler);
 });
-

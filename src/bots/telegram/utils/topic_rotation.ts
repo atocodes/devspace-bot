@@ -1,8 +1,9 @@
 // Topic rotation (no repeats)
 
-import { Topic } from "../../../domain/entities";
-import { logger } from "../../../infrastructure/config";
-import { getTopicsUseCase } from "../../../infrastructure/container";
+import { Topic } from "../../../domain";
+import { getTopicsUseCase, logger } from "../../../infrastructure";
+
+
 // import { TopicNames, topicNamesList } from "../types/topic.types";
 
 let lastTopicIndex = -1;

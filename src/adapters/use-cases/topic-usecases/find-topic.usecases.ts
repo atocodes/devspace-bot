@@ -1,5 +1,6 @@
 import { Topic } from "../../../domain/entities";
-import { TopicRepository } from "../../../domain/repositories/topic.repo";
+import { TopicRepository } from "../../../domain/repositories"
+;;
 
 export class FindTopicUsecase {
   constructor(private readonly topicRepo: TopicRepository) {}

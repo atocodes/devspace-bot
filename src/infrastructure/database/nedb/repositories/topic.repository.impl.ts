@@ -12,6 +12,23 @@ export class TopicRepositoryImpl implements TopicRepository {
     }
   }
 
+  async removeTopic(query: Record<string, any>): Promise<void> {
+    try {
+      await topicsDB.removeAsync({ ...query }, {});
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async findMany(query: Record<string, any>): Promise<Topic[] | []> {
+    try {
+      const res = await topicsDB.findAsync(query, { _id: 1 });
+      return res ?? [];
+    } catch (error) {
+      throw error;
+    }
+  }
+
   async findTopic({
     threadId,
     title,
@@ -50,14 +67,6 @@ export class TopicRepositoryImpl implements TopicRepository {
   async create(topic: Topic): Promise<void> {
     try {
       await topicsDB.insertAsync(topic);
-    } catch (error) {
-      throw error;
-    }
-  }
-
-  async remove(id: number) {
-    try {
-      topicsDB.remove({ _id: id });
     } catch (error) {
       throw error;
     }
