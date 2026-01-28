@@ -6,7 +6,7 @@ import { SUPER_GROUP_ID } from "../../../../infrastructure/config/env.config";
 import { bot } from "../../bot";
 
 
-export const removeTopicAction = async (
+export const REMOVE_TOPIC_ACTION = async (
   ctx: Context<Update.CallbackQueryUpdate<CallbackQuery>> &
     Omit<AssistantBotContext, keyof Context<Update>> & {
       match: RegExpExecArray;

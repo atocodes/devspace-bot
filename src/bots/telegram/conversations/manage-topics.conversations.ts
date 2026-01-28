@@ -1,8 +1,7 @@
 import { Markup, Scenes } from "telegraf";
 import { AssistantBotContext } from "../types";
 import { findManyTopicUsecase } from "../../../infrastructure";
-import { removeTopicAction } from "./actions";
-
+import { REMOVE_TOPIC_ACTION } from "./topic-management-actions";
 
 export const manageTopicsScene = new Scenes.BaseScene<AssistantBotContext>(
   "manageTopicsScene",
@@ -28,8 +27,7 @@ manageTopicsScene.enter(async (ctx) => {
   });
 });
 
-manageTopicsScene.action(/^remove:(.+)/, removeTopicAction);
-
+manageTopicsScene.action(/^remove:(.+)/, REMOVE_TOPIC_ACTION);
 
 export async function STARTMANAGETOPICCONVERSATION(ctx: AssistantBotContext) {
   ctx.scene.enter("manageTopicsScene");

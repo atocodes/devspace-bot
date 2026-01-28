@@ -1,9 +1,10 @@
-import { TopicRepository } from "../../../domain/repositories"
-;;
+import { Topic } from "../../../domain";
+import { TopicRepository } from "../../../domain/repositories";
 
 export class UpdateTopicTitleUsecase {
   constructor(private readonly topicRepo: TopicRepository) {}
-  async execute({ threadId, title }: { threadId: number; title: string }) {
-    await this.topicRepo.updateTopicTitle(title, threadId);
+  async execute({ ...topic }: Topic) {
+    console.log(topic)
+    await this.topicRepo.updateTopic(topic);
   }
 }

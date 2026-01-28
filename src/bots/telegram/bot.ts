@@ -7,7 +7,7 @@ import {
   threadPostGuard,
   updateTopic,
 } from "./middlewares";
-import { actions, registerTopic, startCommand, sudo } from "./handlers";
+import { actions, registerTopic, SEED_COMMAND, startCommand, sudo } from "./handlers";
 import {
   stage,
   STARTMANAGETOPICCONVERSATION,
@@ -54,6 +54,7 @@ bot.use(stage.middleware());
 // Start conversatinal bot
 bot.command("createcontent", STARTMANUALPOSTCONVERSATION);
 bot.command("managetopics", STARTMANAGETOPICCONVERSATION);
+bot.command("seed",SEED_COMMAND)
 bot.on("message", updateTopic);
 
 if (NODE_ENV == "production")

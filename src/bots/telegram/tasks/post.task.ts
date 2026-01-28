@@ -14,6 +14,7 @@ import {
 import { logger } from "../../../infrastructure/config";
 import { MIN_INTERVAL } from "../../../constants";
 import { SUPER_GROUP_ID } from "../../../infrastructure/config/env.config";
+import { updateTopicUsecase } from "../../../infrastructure";
 
 let retryCount = 0;
 
@@ -24,6 +25,7 @@ export async function postTask({ message, topic }: PendingPost) {
   }
 
   const now = Date.now();
+
   if (now - lastPostedAt < MIN_INTERVAL) {
     logger.warn("Post skipped: too soon");
     return;
@@ -34,15 +36,6 @@ export async function postTask({ message, topic }: PendingPost) {
   try {
     const nextTopicName = topic ?? (await getNextTopic());
     logger.info("-----------------------");
-    // logger.info("Sending message");
-    // logger.info("TOPIC: " + nextTopicName.title);
-    // logger.info("Supergroup ID: " + SUPER_GROUP_ID);
-    // logger.info(
-    //   "Topic Admin: " +
-    //     [nextTopicName.creator.first_name, nextTopicName.creator.last_name],
-    // );
-    // logger.info("Thread ID: " + topic?.threadId);
-
     const msg =
       message ??
       (await generateGeminiContent({ topic: nextTopicName })) ??
@@ -60,6 +53,11 @@ export async function postTask({ message, topic }: PendingPost) {
       },
     });
 
+    await updateTopicUsecase.execute({
+      threadId: topic?.threadId as number,
+      title: topic?.title as string,
+      lastPostedAt: new Date().toISOString(),
+    });
     logger.info(
       {
         topic: nextTopicName,
@@ -69,18 +67,7 @@ export async function postTask({ message, topic }: PendingPost) {
     );
     logger.info("-----------------------");
   } catch (error) {
-    if (error instanceof TelegramError) {
-      logger.error(`Telegram Error: ${error.message}`);
-      // return;
-      retryCount += 1;
-      if (retryCount != 3) {
-        updateIsPosting(false);
-        return await postTask({ topic, message });
-      }
-      return;
-    } else {
-      logger.error("PostTask Error: " + error);
-    }
+    throw error;
   } finally {
     updateIsPosting(false);
     if (retryCount > 0) retryCount = 0;

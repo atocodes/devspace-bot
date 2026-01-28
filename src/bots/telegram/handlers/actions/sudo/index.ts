@@ -1,3 +1,3 @@
-import { GET_LOG } from "./sendLogFile.actions";
+import { GET_LOG, GET_TOPICS } from "./sendLogFile.actions";
 
-export {GET_LOG}
+export {GET_LOG,GET_TOPICS}

@@ -37,7 +37,7 @@ export async function registerTopic(
 
       await createTopicUseCase.execute({
         title: msg.reply_to_message.forum_topic_created.name,
-        threadId: msg.message_thread_id,
+        threadId: msg.message_thread_id!,
         creator: msg.from,
       });
 

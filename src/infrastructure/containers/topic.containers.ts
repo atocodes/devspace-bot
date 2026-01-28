@@ -8,6 +8,6 @@ export const removeTopicUseCase = new RemoveTopicUsecase(topicRepository);
 export const getTopicsUseCase = new GetTopicsUsecase(topicRepository);
 export const findTopicUseCase = new FindTopicUsecase(topicRepository);
 export const findManyTopicUsecase = new FindManyTopicUsecase(topicRepository);
-export const updateTopicTitleUsecase = new UpdateTopicTitleUsecase(
+export const updateTopicUsecase = new UpdateTopicTitleUsecase(
   topicRepository,
 );

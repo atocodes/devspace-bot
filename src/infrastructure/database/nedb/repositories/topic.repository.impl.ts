@@ -52,11 +52,12 @@ export class TopicRepositoryImpl implements TopicRepository {
     }
   }
 
-  async updateTopicTitle(title: string, threadId: number): Promise<void> {
+  async updateTopic(topic: Topic): Promise<void> {
     try {
+      console.log(topic);
       await topicsDB.updateAsync(
-        { threadId },
-        { $set: { title: title } },
+        { threadId: topic.threadId },
+        { $set: { ...topic } },
         { multi: false, upsert: false },
       );
     } catch (error) {

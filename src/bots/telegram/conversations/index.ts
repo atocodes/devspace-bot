@@ -21,4 +21,4 @@ const endConversation = (ctx: AssistantBotContext) => {
 stage.command("cancel", endConversation);
 
 export { stage, STARTMANUALPOSTCONVERSATION, STARTMANAGETOPICCONVERSATION };
-export * from "./actions";
+export * from "./topic-management-actions";

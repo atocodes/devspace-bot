@@ -13,7 +13,6 @@
 //   "reactnative",
 // ] as const; // "as const" makes each item a literal type
 
-import { getTopicsUseCase } from "../../../infrastructure/container";
 
 // Step 2: Derive the type from the array
 

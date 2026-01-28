@@ -10,7 +10,7 @@ export class CreateTopicUsecase {
       threadId: newTopic.threadId!,
     });
     const creatorTopics = await this.topicRepo.findMany({
-      "creator.id": newTopic.creator.id,
+      "creator.id": newTopic.creator!.id,
     });
     if (topic) {
       return;

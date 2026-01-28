@@ -12,5 +12,5 @@ export interface TopicRepository {
     title?: string;
   }): Promise<Topic>;
   findMany(query: Record<string, any>): Promise<Topic[]>;
-  updateTopicTitle(title: string, threadId: number): Promise<void>;
+  updateTopic(topic: Topic): Promise<void>;
 }

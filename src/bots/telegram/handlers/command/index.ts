@@ -1,3 +1,4 @@
+import { SEED_COMMAND } from "./seed.command";
 import { startCommand } from "./start.command";
 
-export {startCommand}
+export { startCommand, SEED_COMMAND };

@@ -34,7 +34,24 @@ export const auth = async (
         },
         `Unauthorozed user or group tried to access bot`,
       );
-      return;
+      return await ctx.reply(
+        "🚫 Access denied.\nThis bot is restricted and can only be used by authorized users or groups.",
+      );
     }
-  } catch (error) {}
+  } catch (error) {
+    logger.error(
+      {
+        error,
+        userName: ctx.from?.username,
+        userId: ctx.from?.id,
+        chatId: ctx.chat?.id,
+        time: new Date().toISOString(),
+      },
+      "Auth middleware failed",
+    );
+
+    return await ctx.reply(
+      "⚠️ Something went wrong while verifying access.\nPlease try again later or contact the administrator.",
+    );
+  }
 };

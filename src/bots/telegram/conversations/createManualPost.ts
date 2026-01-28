@@ -2,13 +2,16 @@ import { Markup, Scenes } from "telegraf";
 import { AssistantBotContext } from "../types";
 import { findManyTopicUsecase, logger } from "../../../infrastructure";
 import { convertTo2DArray, SendMessage } from "../utils";
-import { createTopicAction } from "./actions";
 import { pendingPrompts } from "../state";
-
+import { SELECT_TOPIC_ACTION } from "./topic-management-actions/select-topic.action";
 
 // Use generic Scenes.SceneContext for simple flows
-export const topicScene = new Scenes.BaseScene<AssistantBotContext>("topicScene");
-export const promptScene = new Scenes.BaseScene<AssistantBotContext>("promptScene");
+export const topicScene = new Scenes.BaseScene<AssistantBotContext>(
+  "topicScene",
+);
+export const promptScene = new Scenes.BaseScene<AssistantBotContext>(
+  "promptScene",
+);
 // Enter handler
 topicScene.enter(async (ctx) => {
   const topics =
@@ -17,24 +20,16 @@ topicScene.enter(async (ctx) => {
     })) ?? [];
 
   if (topics.length === 0) {
-    await ctx.reply(
-      "No topics registered under your administration.",
-    );
+    await ctx.reply("No topics registered under your administration.");
     return ctx.scene.leave();
   }
-
   await ctx.reply(
     "Choose a topic:\nYou can type /cancel at any time to stop the conversation.",
     {
       ...Markup.inlineKeyboard(
-        convertTo2DArray(
-          topics.map((topic) => topic.title),
-        ).map((row) =>
-          row.map((title) =>
-            Markup.button.callback(
-              title,
-              `topic:${topics.find(t => t.title === title)?.threadId}`,
-            ),
+        convertTo2DArray(topics).map((row) =>
+          row.map((topic) =>
+            Markup.button.callback(topic.title, `topic:${topic.threadId}`),
           ),
         ),
       ),
@@ -43,7 +38,7 @@ topicScene.enter(async (ctx) => {
 });
 
 // Inline button handlers
-topicScene.action(/^topic:(.+)/, createTopicAction);
+topicScene.action(/^topic:(.+)/, SELECT_TOPIC_ACTION);
 
 promptScene.enter((ctx) => {
   ctx.reply("Alright! What would you like the content to say? ✨");
@@ -62,7 +57,6 @@ promptScene.on("text", async (ctx) => {
   pendingPrompts.delete(ctx.from.id);
   ctx.scene.leave();
 });
-
 
 export async function STARTMANUALPOSTCONVERSATION(ctx: AssistantBotContext) {
   ctx.scene.enter("topicScene");
