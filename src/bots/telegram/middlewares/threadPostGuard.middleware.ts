@@ -2,6 +2,7 @@ import { Context, MiddlewareFn } from "telegraf";
 import { publicTopicIds } from "../../../constants";
 import { findTopicUseCase, getTopicsUseCase } from "../../../infrastructure";
 import { isUserAdmin } from "../utils";
+import { bot } from "../bot";
 
 export const threadPostGuard: MiddlewareFn<Context> = async (
   ctx: Context,
@@ -26,7 +27,23 @@ export const threadPostGuard: MiddlewareFn<Context> = async (
       isTopicGeneral == false &&
       isAdmin == false
     ) {
-      return ctx.deleteMessage(msg.message_id);
+      ctx.deleteMessage(msg.message_id);
+      const username = sender.username
+        ? `@${sender.username}`
+        : sender.first_name;
+      const messageText = "text" in msg ? msg.text : "";
+      const escapedText = messageText
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;");
+
+      return await bot.telegram.sendMessage(
+        sender.id,
+        `Hello ${username}, your message was deleted. You can only post in the "General" topic.\n\nTo resend it, you can copy your message from here:\n<code>${escapedText}</code>`,
+        {
+          parse_mode: "HTML",
+        },
+      );
     }
   } catch (e) {
     console.log(e, "ERRRRRRRRRR");
