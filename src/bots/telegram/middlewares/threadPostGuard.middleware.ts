@@ -1,6 +1,6 @@
 import { Context, MiddlewareFn } from "telegraf";
 import { publicTopicIds } from "../../../constants";
-import { findTopicUseCase, getTopicsUseCase } from "../../../infrastructure";
+import { logger } from "../../../infrastructure";
 import { isUserAdmin } from "../utils";
 import { bot } from "../bot";
 
@@ -27,7 +27,7 @@ export const threadPostGuard: MiddlewareFn<Context> = async (
       isTopicGeneral == false &&
       isAdmin == false
     ) {
-      ctx.deleteMessage(msg.message_id);
+      await ctx.deleteMessage(msg.message_id);
       const username = sender.username
         ? `@${sender.username}`
         : sender.first_name;
@@ -46,7 +46,7 @@ export const threadPostGuard: MiddlewareFn<Context> = async (
       );
     }
   } catch (e) {
-    console.log(e, "ERRRRRRRRRR");
+    logger.error({ e }, "Can not Delete Message Error");
     return;
   } finally {
     await next();
